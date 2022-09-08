@@ -1,6 +1,7 @@
 
 import 'package:ecom_user_app/page/cart_page.dart';
 import 'package:ecom_user_app/page/checkout_page.dart';
+import 'package:ecom_user_app/page/order_successful_page.dart';
 import 'package:ecom_user_app/page/phone_verification_page.dart';
 import 'package:ecom_user_app/page/registration_page.dart';
 import 'package:ecom_user_app/page/user_address_page.dart';
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         CartPage.routeName:(_)=>CartPage(),
         UserAddressPage.routeName:(_)=>UserAddressPage(),
         CheckoutPage.routeName:(_)=>CheckoutPage(),
+        OrderSuccessfulPage.routeName:(_)=>OrderSuccessfulPage(),
       },
     );
   }

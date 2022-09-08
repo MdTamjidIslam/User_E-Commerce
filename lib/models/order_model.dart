@@ -1,18 +1,19 @@
 
 
+
 import 'address_model.dart';
 import 'date_model.dart';
 
 const String orderIDKey = 'orderId';
-const String userIDKey = 'userId';
-const String orderDateKey = 'orderDate';
-const String orderStatusKey = 'orderStatus';
-const String orderPaymentMethodKey = 'paymentMethod';
-const String orderDeliveryChargeKey = 'deliveryCharge';
-const String orderDiscountKey = 'discount';
-const String orderVatKey = 'vat';
-const String orderGrandTotalKey = 'grandTotal';
-const String orderDeliveryAddressKey = 'deliveryAddress';
+ const String orderUserIDKey = 'userId';
+ const String orderDateKey = 'orderDate';
+ const String orderStatusKey = 'orderStatus';
+ const String orderPaymentMethodKey = 'paymentMethod';
+ const String orderDeliveryChargeKey = 'deliveryCharge';
+ const String orderDiscountKey = 'discount';
+ const String orderVatKey = 'vat';
+ const String orderGrandTotalKey = 'grandTotal';
+ const String orderDeliveryAddressKey = 'deliveryAddress';
 
 class OrderModel{
   String? orderId, userId;
@@ -23,8 +24,8 @@ class OrderModel{
 
   OrderModel(
       {this.orderId,
-        this.userId,
-        required this.orderStatus,
+      this.userId,
+      required this.orderStatus,
         required this.paymentMethod,
         required this.deliveryAddress,
         required this.deliveryCharge,
@@ -36,7 +37,7 @@ class OrderModel{
   Map<String, dynamic> toMap(){
     return <String, dynamic> {
       orderIDKey : orderId,
-      userIDKey : userId,
+      orderUserIDKey : userId,
       orderDateKey: orderDate.toMap(),
       orderStatusKey: orderStatus,
       orderPaymentMethodKey : paymentMethod,
@@ -51,7 +52,7 @@ class OrderModel{
   factory OrderModel.fromMap(Map<String, dynamic> map){
     return OrderModel(
       orderId: map[orderIDKey],
-      userId: map[userIDKey],
+      userId: map[orderUserIDKey],
       orderDate: DateModel.fromMap(map[orderDateKey]),
       orderStatus: map[orderStatusKey],
       paymentMethod: map[orderPaymentMethodKey],

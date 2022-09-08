@@ -1,21 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecom_user_app/models/order_model.dart';
-import 'package:ecom_user_app/providers/order_provider.dart';
-import 'package:ecom_user_app/providers/user_provider.dart';
+import 'package:ecom_user_app/page/product_page.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/auth_service.dart';
 import '../models/address_model.dart';
 import '../models/date_model.dart';
+import '../models/order_model.dart';
 import '../models/user_model.dart';
 import '../providers/cart_provider.dart';
+import '../providers/order_provider.dart';
+import '../providers/product_provider.dart';
+import '../providers/user_provider.dart';
 import '../utils/constants.dart';
 import '../utils/helper_functions.dart';
+import 'order_successful_page.dart';
 import 'user_address_page.dart';
 
 class CheckoutPage extends StatefulWidget {
-  static const String routeName='/checkout';
+  static const String routeName = '/checkout';
+
   const CheckoutPage({Key? key}) : super(key: key);
 
   @override
@@ -26,13 +32,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   late CartProvider cartProvider;
   late OrderProvider orderProvider;
   late UserProvider userProvider;
-  String paymentMethodGroupValue= PaymentMethod.cod;
-
+  String paymentMethodGroupValue = PaymentMethod.cod;
   @override
   void didChangeDependencies() {
     cartProvider = Provider.of<CartProvider>(context);
     orderProvider = Provider.of<OrderProvider>(context);
-    userProvider = Provider.of<UserProvider>(context,listen:false);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
     orderProvider.getOrderConstants();
     super.didChangeDependencies();
   }
@@ -120,7 +125,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   builder: (context, snapshot) {
                     if(snapshot.hasData) {
                       final userM = UserModel.fromMap(snapshot.data!.data()!);
-                      userProvider.userModel=userM;
+                      userProvider.userModel = userM;
                       return Card(
                         elevation: 5,
                         child: Padding(
@@ -166,15 +171,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           },
                         ),
                         const Text(PaymentMethod.cod),
-
+                        const SizedBox(width: 15,),
                         Radio<String>(
-                            value:PaymentMethod.online,
-                            groupValue: paymentMethodGroupValue,
-                            onChanged: (value){
-                              setState(() {
-                                paymentMethodGroupValue=value!;
-                              });
-                            }),
+                          value: PaymentMethod.online,
+                          groupValue: paymentMethodGroupValue,
+                          onChanged: (value) {
+                            setState(() {
+                              paymentMethodGroupValue = value!;
+                            });
+                          },
+                        ),
                         const Text(PaymentMethod.online),
                       ],
                     ),
@@ -183,12 +189,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: _saveOrder,
-              child: const Text('Place Order'),
-            ),
+          ElevatedButton(
+            onPressed: _saveOrder,
+            child: const Text('Place Order'),
           )
         ],
       ),
@@ -196,30 +199,43 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   void _saveOrder() {
-    if( userProvider.userModel?.address==null){
+    if(userProvider.userModel?.address == null) {
       showMsg(context, 'Please provide a delivery address');
       return;
     }
-final orderModel = OrderModel(
-    orderStatus:OrderStatus.pending,
-    paymentMethod: paymentMethodGroupValue,
-  orderDate: DateModel(
-    timestamp: Timestamp.fromDate(DateTime.now()),
-    day: DateTime.now().day,
-    month: DateTime.now().month,
-    year: DateTime.now().year,
-  ),
-  deliveryAddress: AddressModel(
-    streetAddress: userProvider.userModel!.address!.streetAddress,
-    city: userProvider.userModel!.address!.city,
-    area: userProvider.userModel!.address!.area,
-    zipCode: userProvider.userModel!.address!.zipCode,
-  ),
-    deliveryCharge: orderProvider.orderConstantsModel.deliveryCharge,
-    discount: orderProvider.orderConstantsModel.discount,
-    vat: orderProvider.orderConstantsModel.vat,
-    grandTotal:orderProvider.getGrandTotal(cartProvider.getCartSubTotal()),
+    EasyLoading.show(status: 'Please Wait');
+    final orderModel = OrderModel(
+      userId: AuthService.user!.uid,
+      paymentMethod: paymentMethodGroupValue,
+      orderStatus: OrderStatus.pending,
+      grandTotal: orderProvider.getGrandTotal(cartProvider.getCartSubTotal()),
+      deliveryCharge: orderProvider.orderConstantsModel.deliveryCharge,
+      discount: orderProvider.orderConstantsModel.discount,
+      vat: orderProvider.orderConstantsModel.vat,
+      orderDate: DateModel(
+        timestamp: Timestamp.fromDate(DateTime.now()),
+        day: DateTime.now().day,
+        month: DateTime.now().month,
+        year: DateTime.now().year,
+      ),
+      deliveryAddress: AddressModel(
+        streetAddress: userProvider.userModel!.address!.streetAddress,
+        city: userProvider.userModel!.address!.city,
+        area: userProvider.userModel!.address!.area,
+        zipCode: userProvider.userModel!.address!.zipCode,
+      ),
     );
+    orderProvider.addOrder(orderModel, cartProvider.cartList)
+    .then((_) async {
+      await Provider.of<ProductProvider>(context, listen: false)
+        .updateCategoryProductCount(cartProvider.cartList);
+      await cartProvider.clearAllCartItems();
+      EasyLoading.dismiss();
+      Navigator.pushNamedAndRemoveUntil(
+          context, OrderSuccessfulPage.routeName, ModalRoute.withName(ProductPage.routeName));
+    })
+        .catchError((error) {
+          EasyLoading.dismiss();
+    });
   }
 }
-

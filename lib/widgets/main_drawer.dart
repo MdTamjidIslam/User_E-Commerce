@@ -1,7 +1,9 @@
-import 'package:ecom_user_app/page/cart_page.dart';
+
 import 'package:flutter/material.dart';
 import '../auth/auth_service.dart';
+import '../page/cart_page.dart';
 import '../page/launcher_page.dart';
+import '../page/order_page.dart';
 
 
 class MainDrawer extends StatelessWidget {
@@ -22,6 +24,20 @@ class MainDrawer extends StatelessWidget {
             },
             leading: Icon(Icons.shopping_cart),
             title: const Text('My Cart'),
+          ),
+          ListTile(
+            onTap: () {
+              Navigator.pushNamed(context, OrderPage.routeName);
+            },
+            leading: Icon(Icons.shopping_bag),
+            title: const Text('My Orders'),
+          ),
+          ListTile(
+            onTap: () {
+              //Navigator.pushNamed(context, UserProfilePage.routeName);
+            },
+            leading: Icon(Icons.person),
+            title: const Text('My Profile'),
           ),
           ListTile(
             onTap: () {

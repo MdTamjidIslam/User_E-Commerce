@@ -1,11 +1,11 @@
 
-import 'package:ecom_user_app/auth/auth_service.dart';
-import 'package:ecom_user_app/utils/helper_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
+import '../auth/auth_service.dart';
+import '../utils/helper_functions.dart';
 import 'registration_page.dart';
 
 class PhoneVerificationPage extends StatefulWidget {
@@ -53,7 +53,7 @@ class _PhoneVerificationPageState extends State<PhoneVerificationPage> {
             controller: phoneController,
             keyboardType: TextInputType.phone,
             decoration: InputDecoration(
-              labelText: '+88Enter Mobile Number',
+              labelText: '+88 Country code and Number',
               filled: true,
             ),
           ),

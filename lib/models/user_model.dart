@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecom_user_app/models/address_model.dart';
+
+import 'address_model.dart';
 
 class UserModel {
   String uid;

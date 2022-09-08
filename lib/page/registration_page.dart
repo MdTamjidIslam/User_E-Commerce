@@ -55,6 +55,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             padding: const EdgeInsets.all(20),
             shrinkWrap: true,
             children: [
+              Image.asset('images/registion.png'),
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(
@@ -138,7 +139,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.orange
+                primary: Colors.orange
                   ),
                   onPressed: () {
                     authenticate();

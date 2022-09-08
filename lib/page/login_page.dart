@@ -1,6 +1,5 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecom_user_app/providers/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../auth/auth_service.dart';
 import '../models/user_model.dart';
+import '../providers/user_provider.dart';
 import 'launcher_page.dart';
 import 'phone_verification_page.dart';
 
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.all(20),
             shrinkWrap: true,
             children: [
-              Image.asset('images/login.jpg',width: double.maxFinite,fit: BoxFit.cover,),
+              Image.asset('images/login.jpg'),
               TextFormField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.orange
+                   primary: Colors.orange
                   ),
                   onPressed: () {
                     authenticate();
@@ -104,32 +104,32 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Forgot Password?',style:const TextStyle(color:Colors.purple),),
+                  const Text('Forgot Password?',style: TextStyle(color: Colors.blue),),
                   TextButton(
                     onPressed: () {
 
                     },
-                    child: const Text('Click Here', style: const TextStyle(color: Colors.blue),),
+                    child: const Text('Click Here', style: const TextStyle(color: Colors.purple),),
                   )
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('New User?',style: TextStyle(color: Colors.purple),),
+                  const Text('New User?',style: TextStyle(color: Colors.blue),),
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, PhoneVerificationPage.routeName);
                     },
-                    child: const Text('REGISTER', style: const TextStyle(color: Colors.blue),),
+                    child: const Text('REGISTER', style: const TextStyle(color: Colors.purple),),
                   )
                 ],
               ),
               const SizedBox(height: 20,),
-              const Center(child: Text('OR', style: TextStyle(color: Colors.black, fontSize: 18),)),
+              const Center(child: Text('OR', style: TextStyle(color: Colors.blue, fontSize: 18),)),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                primary: Colors.orange
+                 primary: Colors.orange
                 ),
                 onPressed: () {
                   AuthService.signInWithGoogle().then((credential) async {
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                     }
                   });
                 },
-                child: const Text('SIGN IN WITH GOOGLE', style: const TextStyle(color: Colors.white),),
+                child: const Text('SIGN IN WITH GOOGLE', style: const TextStyle(color: Colors.black),),
               ),
               const SizedBox(height: 10,),
               Text(errMsg, style: TextStyle(color: Theme.of(context).errorColor),)

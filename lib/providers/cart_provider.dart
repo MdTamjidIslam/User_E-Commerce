@@ -1,3 +1,4 @@
+
 import 'package:ecom_user_app/auth/auth_service.dart';
 import 'package:ecom_user_app/db/dbhelper.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +8,10 @@ import '../models/cart_model.dart';
 class CartProvider extends ChangeNotifier {
   List<CartModel> cartList = [];
 
-  getCartByUsers() {
-    DbHelper.getCartByUsers(AuthService.user!.uid).listen((snapshot) {
-      cartList = List.generate(snapshot.docs.length,
-          (index) => CartModel.fromMap(snapshot.docs[index].data()));
+  getCartByUser() {
+    DbHelper.getCartByUser(AuthService.user!.uid).listen((snapshot) {
+      cartList = List.generate(snapshot.docs.length, (index) =>
+          CartModel.fromMap(snapshot.docs[index].data()));
       notifyListeners();
     });
   }
@@ -21,39 +22,42 @@ class CartProvider extends ChangeNotifier {
   Future<void> removeFromCart(String pid) =>
       DbHelper.removeFromCart(pid, AuthService.user!.uid);
 
-  static Future<void> _updateCartQuantity(String pid, num quantity) =>
+  Future<void> clearAllCartItems() =>
+      DbHelper.clearAllCartItems(AuthService.user!.uid, cartList);
+
+  Future<void> _updateCartQuantity(String pid, num quantity) =>
       DbHelper.updateCartQuantity(AuthService.user!.uid, pid, quantity);
-
-  increaseQuantity (CartModel cartModel) async{
-    await _updateCartQuantity(cartModel.productId!, cartModel.quantity+1 );
-
-  }
-  decreaseQuantity (CartModel cartModel) async{
-   if(cartModel.quantity>1){
-     await _updateCartQuantity(cartModel.productId!, cartModel.quantity -1);
-   }
-
-  }
-
-  num getCartSubTotal(){
-    num total= 0;
-    for(var cartM in cartList){
-      total += cartM.salePrice* cartM.quantity ;
-    }
-    return total ;
-  }
-
 
   int get totalItemsInCart => cartList.length;
 
   num unitPriceWithQuantity(CartModel cartModel) =>
       cartModel.salePrice * cartModel.quantity;
 
+  increaseQuantity(CartModel cartModel) async {
+    if(cartModel.quantity < cartModel.stock) {
+      await _updateCartQuantity(cartModel.productId!, cartModel.quantity + 1);
+    }
+  }
+
+  decreaseQuantity(CartModel cartModel) async {
+    if(cartModel.quantity > 1) {
+      await _updateCartQuantity(cartModel.productId!, cartModel.quantity - 1);
+    }
+
+  }
+
+  num getCartSubTotal() {
+    num total = 0;
+    for(var cartM in cartList) {
+      total += cartM.salePrice * cartM.quantity;
+    }
+    return total;
+  }
 
   bool isInCart(String pid) {
     bool tag = false;
-    for (var cartM in cartList) {
-      if (cartM.productId == pid) {
+    for(var cartM in cartList) {
+      if(cartM.productId == pid) {
         tag = true;
         break;
       }
